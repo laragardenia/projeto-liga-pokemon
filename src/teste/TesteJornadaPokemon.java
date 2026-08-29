@@ -10,6 +10,7 @@ import simulacao.ObservadorJornada;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /** Testes executáveis da primeira etapa da jornada. */
 public class TesteJornadaPokemon {
@@ -24,6 +25,8 @@ public class TesteJornadaPokemon {
         testarColetaItensDuranteViagem();
         testarRevisitaNaoDuplicaItens();
         testarInventarioNaoPermiteAlteracaoExterna();
+        testarRegistroDeInsigniasSemDuplicidade();
+        testarInscricaoNaLigaExigeLocalQuantidadeEPrazo();
 
         System.out.println("Todos os testes da Jornada Pokémon passaram.");
     }
@@ -224,6 +227,58 @@ public class TesteJornadaPokemon {
                 "O inventário retornado não deveria permitir alterações externas.");
     }
 
+    private static void testarRegistroDeInsigniasSemDuplicidade() {
+        Grafo grafo = criarGrafoBase();
+        JornadaPokemon jornada = criarJornada(grafo, 100L);
+
+        verificar(jornada.registrarInsignia("ROCHA"),
+                "A primeira insígnia deveria ser registrada.");
+        verificar(!jornada.registrarInsignia("ROCHA"),
+                "A mesma insígnia não deveria ser registrada duas vezes.");
+        verificar(jornada.registrarInsignia("CASCATA"),
+                "Uma insígnia diferente deveria ser registrada.");
+        verificar(jornada.getInsignias().size() == 2,
+                "A jornada deveria possuir duas insígnias distintas.");
+        verificar(jornada.possuiInsignia("ROCHA"),
+                "A consulta deveria encontrar a insígnia registrada.");
+
+        Set<String> insignias = jornada.getInsignias();
+        boolean alteracaoRejeitada = false;
+        try {
+            insignias.add("TROVAO");
+        } catch (UnsupportedOperationException e) {
+            alteracaoRejeitada = true;
+        }
+        verificar(alteracaoRejeitada,
+                "O conjunto retornado não deveria permitir alterações externas.");
+    }
+
+    private static void testarInscricaoNaLigaExigeLocalQuantidadeEPrazo() {
+        Grafo grafo = criarGrafoComEstadio();
+        JornadaPokemon jornada = criarJornada(grafo, 100L);
+        jornada.registrarInsignia("ROCHA");
+        jornada.registrarInsignia("CASCATA");
+
+        verificar(!jornada.podeSeInscreverNaLiga(2),
+                "Fora do Estádio, a inscrição não deveria ser permitida.");
+
+        jornada.viajarPara(grafo.getVertice("EST"));
+        verificar(jornada.podeSeInscreverNaLiga(2),
+                "No Estádio, com duas insígnias e dentro do prazo, a inscrição deveria ser permitida.");
+        verificar(!jornada.podeSeInscreverNaLiga(3),
+                "A inscrição não deveria ser permitida sem insígnias suficientes.");
+
+        JornadaPokemon jornadaAtrasada = criarJornada(grafo, 20L);
+        jornadaAtrasada.registrarInsignia("ROCHA");
+        jornadaAtrasada.registrarInsignia("CASCATA");
+        jornadaAtrasada.viajarPara(grafo.getVertice("EST"));
+
+        verificar(!jornadaAtrasada.estaDentroDoPrazo(),
+                "A viagem de 25 unidades deveria exceder o prazo de 20.");
+        verificar(!jornadaAtrasada.podeSeInscreverNaLiga(2),
+                "Fora do prazo, a inscrição não deveria ser permitida.");
+    }
+
     private static JornadaPokemon criarJornada(Grafo grafo, long prazo) {
         Vertice laboratorio = grafo.getVertice("LAB");
         return new JornadaPokemon(grafo, laboratorio, prazo);
@@ -238,6 +293,13 @@ public class TesteJornadaPokemon {
         grafo.adicionarAresta("LAB", "CID", 10);
         grafo.adicionarAresta("CID", "GIN", 10);
         grafo.adicionarAresta("LAB", "GIN", 30);
+        return grafo;
+    }
+
+    private static Grafo criarGrafoComEstadio() {
+        Grafo grafo = criarGrafoBase();
+        grafo.adicionarVertice("EST", "Estádio da Liga", TipoVertice.ESTADIO);
+        grafo.adicionarAresta("GIN", "EST", 5);
         return grafo;
     }
 

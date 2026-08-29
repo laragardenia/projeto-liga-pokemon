@@ -4,12 +4,15 @@ import algoritmos.Dijkstra;
 import algoritmos.ResultadoCaminho;
 import grafo.Aresta;
 import grafo.Grafo;
+import grafo.TipoVertice;
 import grafo.Vertice;
 import modelo.Item;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Controla o deslocamento do jogador pelo mapa e o tempo da jornada.
@@ -23,6 +26,7 @@ public class JornadaPokemon {
     private final long prazoLiga;
     private final List<Vertice> locaisVisitados;
     private final List<Item> inventario;
+    private final Set<String> insignias;
     private final List<ObservadorJornada> observadores;
 
     private Vertice posicaoAtual;
@@ -50,6 +54,7 @@ public class JornadaPokemon {
         this.locaisVisitados = new ArrayList<Vertice>();
         this.locaisVisitados.add(posicaoNoGrafo);
         this.inventario = new ArrayList<Item>();
+        this.insignias = new LinkedHashSet<String>();
         this.observadores = new ArrayList<ObservadorJornada>();
         coletarItensDisponiveis(posicaoNoGrafo);
     }
@@ -156,6 +161,43 @@ public class JornadaPokemon {
     /** Retorna uma cópia imutável dos itens coletados durante a jornada. */
     public List<Item> getInventario() {
         return Collections.unmodifiableList(new ArrayList<Item>(inventario));
+    }
+
+    /**
+     * Registra uma insígnia já conquistada por outro módulo. Retorna falso
+     * quando ela já havia sido registrada.
+     */
+    public boolean registrarInsignia(String codigoInsignia) {
+        if (codigoInsignia == null || codigoInsignia.trim().isEmpty()) {
+            throw new IllegalArgumentException("O código da insígnia é obrigatório.");
+        }
+        return insignias.add(codigoInsignia.trim());
+    }
+
+    public Set<String> getInsignias() {
+        return Collections.unmodifiableSet(new LinkedHashSet<String>(insignias));
+    }
+
+    public boolean possuiInsignia(String codigoInsignia) {
+        if (codigoInsignia == null) {
+            return false;
+        }
+        return insignias.contains(codigoInsignia.trim());
+    }
+
+    /**
+     * A inscrição exige presença no Estádio, insígnias suficientes e prazo
+     * ainda válido. A quantidade exigida é configurada por quem inicia o jogo.
+     */
+    public boolean podeSeInscreverNaLiga(int quantidadeInsigniasNecessarias) {
+        if (quantidadeInsigniasNecessarias <= 0) {
+            throw new IllegalArgumentException(
+                    "A quantidade de insígnias necessária deve ser positiva.");
+        }
+
+        return posicaoAtual.getTipo() == TipoVertice.ESTADIO
+                && insignias.size() >= quantidadeInsigniasNecessarias
+                && estaDentroDoPrazo();
     }
 
     public void adicionarObservador(ObservadorJornada observador) {
