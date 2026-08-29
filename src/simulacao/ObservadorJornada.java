@@ -1,6 +1,9 @@
 package simulacao;
 
 import grafo.Vertice;
+import modelo.Item;
+
+import java.util.List;
 
 /**
  * Ponto de integração executado após a chegada do jogador a cada vértice.
@@ -14,5 +17,6 @@ public interface ObservadorJornada {
             Vertice origem,
             Vertice destino,
             int tempoTrecho,
-            long tempoDecorrido);
+            long tempoDecorrido,
+            List<Item> itensColetados);
 }

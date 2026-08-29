@@ -5,6 +5,7 @@ import algoritmos.ResultadoCaminho;
 import grafo.Aresta;
 import grafo.Grafo;
 import grafo.Vertice;
+import modelo.Item;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,14 +14,15 @@ import java.util.List;
 /**
  * Controla o deslocamento do jogador pelo mapa e o tempo da jornada.
  *
- * Esta primeira versão não conhece batalhas, itens ou Pokémon. Esses eventos
- * serão integrados depois, durante a passagem por cada trecho da rota.
+ * A jornada também coleta os itens disponíveis em cada local visitado. Regras
+ * de uso dos itens, batalhas e Pokémon permanecem fora desta classe.
  */
 public class JornadaPokemon {
     private final Grafo grafo;
     private final Dijkstra dijkstra;
     private final long prazoLiga;
     private final List<Vertice> locaisVisitados;
+    private final List<Item> inventario;
     private final List<ObservadorJornada> observadores;
 
     private Vertice posicaoAtual;
@@ -47,7 +49,9 @@ public class JornadaPokemon {
         this.tempoDecorrido = 0L;
         this.locaisVisitados = new ArrayList<Vertice>();
         this.locaisVisitados.add(posicaoNoGrafo);
+        this.inventario = new ArrayList<Item>();
         this.observadores = new ArrayList<ObservadorJornada>();
+        coletarItensDisponiveis(posicaoNoGrafo);
     }
 
     /** Calcula a melhor rota sem movimentar o jogador ou alterar o relógio. */
@@ -82,12 +86,33 @@ public class JornadaPokemon {
         tempoDecorrido += pesoTrecho;
         posicaoAtual = destino;
         locaisVisitados.add(destino);
-        notificarChegada(origem, destino, pesoTrecho);
+        List<Item> itensColetados = coletarItensDisponiveis(destino);
+        notificarChegada(origem, destino, pesoTrecho, itensColetados);
     }
 
-    private void notificarChegada(Vertice origem, Vertice destino, int tempoTrecho) {
+    private List<Item> coletarItensDisponiveis(Vertice local) {
+        List<Item> itensColetados = new ArrayList<Item>(local.getItensDisponiveis());
+
+        for (Item item : itensColetados) {
+            inventario.add(item);
+            local.removerItem(item);
+        }
+
+        return Collections.unmodifiableList(itensColetados);
+    }
+
+    private void notificarChegada(
+            Vertice origem,
+            Vertice destino,
+            int tempoTrecho,
+            List<Item> itensColetados) {
         for (ObservadorJornada observador : observadores) {
-            observador.aoChegar(origem, destino, tempoTrecho, tempoDecorrido);
+            observador.aoChegar(
+                    origem,
+                    destino,
+                    tempoTrecho,
+                    tempoDecorrido,
+                    itensColetados);
         }
     }
 
@@ -126,6 +151,11 @@ public class JornadaPokemon {
      */
     public List<Vertice> getLocaisVisitados() {
         return Collections.unmodifiableList(new ArrayList<Vertice>(locaisVisitados));
+    }
+
+    /** Retorna uma cópia imutável dos itens coletados durante a jornada. */
+    public List<Item> getInventario() {
+        return Collections.unmodifiableList(new ArrayList<Item>(inventario));
     }
 
     public void adicionarObservador(ObservadorJornada observador) {

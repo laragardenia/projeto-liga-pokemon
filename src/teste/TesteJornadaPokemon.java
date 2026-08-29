@@ -4,6 +4,7 @@ import algoritmos.ResultadoCaminho;
 import grafo.Grafo;
 import grafo.TipoVertice;
 import grafo.Vertice;
+import modelo.Item;
 import simulacao.JornadaPokemon;
 import simulacao.ObservadorJornada;
 
@@ -19,6 +20,10 @@ public class TesteJornadaPokemon {
         testarControleDoPrazo();
         testarHistoricoDeLocaisVisitados();
         testarObservadorExecutadoAposCadaTrecho();
+        testarColetaItensDaPosicaoInicial();
+        testarColetaItensDuranteViagem();
+        testarRevisitaNaoDuplicaItens();
+        testarInventarioNaoPermiteAlteracaoExterna();
 
         System.out.println("Todos os testes da Jornada Pokémon passaram.");
     }
@@ -124,9 +129,11 @@ public class TesteJornadaPokemon {
                     Vertice origem,
                     Vertice destino,
                     int tempoTrecho,
-                    long tempoDecorrido) {
+                    long tempoDecorrido,
+                    List<Item> itensColetados) {
                 chegadas.add(origem.getId() + "->" + destino.getId()
-                        + ":" + tempoTrecho + ":" + tempoDecorrido);
+                        + ":" + tempoTrecho + ":" + tempoDecorrido
+                        + ":" + itensColetados.size());
             }
         });
 
@@ -134,9 +141,87 @@ public class TesteJornadaPokemon {
 
         verificar(chegadas.size() == 2,
                 "O observador deveria ser chamado uma vez por trecho.");
-        verificar(chegadas.get(0).equals("LAB->CID:10:10")
-                        && chegadas.get(1).equals("CID->GIN:10:20"),
+        verificar(chegadas.get(0).equals("LAB->CID:10:10:0")
+                        && chegadas.get(1).equals("CID->GIN:10:20:0"),
                 "O observador deveria receber trecho e relógio já atualizados.");
+    }
+
+    private static void testarColetaItensDaPosicaoInicial() {
+        Grafo grafo = criarGrafoBase();
+        Item mapa = new Item("Mapa da região");
+        grafo.getVertice("LAB").adicionarItem(mapa);
+
+        JornadaPokemon jornada = criarJornada(grafo, 100L);
+
+        verificar(jornada.getInventario().size() == 1
+                        && jornada.getInventario().contains(mapa),
+                "O item da posição inicial deveria ser coletado.");
+        verificar(grafo.getVertice("LAB").getItensDisponiveis().isEmpty(),
+                "O item coletado deveria ser removido do local.");
+    }
+
+    private static void testarColetaItensDuranteViagem() {
+        Grafo grafo = criarGrafoBase();
+        Item erva = new Item("Erva medicinal");
+        Item pedra = new Item("Pedra de evolução");
+        grafo.getVertice("CID").adicionarItem(erva);
+        grafo.getVertice("GIN").adicionarItem(pedra);
+        JornadaPokemon jornada = criarJornada(grafo, 100L);
+        final List<Integer> quantidadesColetadas = new ArrayList<Integer>();
+
+        jornada.adicionarObservador(new ObservadorJornada() {
+            @Override
+            public void aoChegar(
+                    Vertice origem,
+                    Vertice destino,
+                    int tempoTrecho,
+                    long tempoDecorrido,
+                    List<Item> itensColetados) {
+                quantidadesColetadas.add(itensColetados.size());
+            }
+        });
+
+        jornada.viajarPara(grafo.getVertice("GIN"));
+
+        verificar(jornada.getInventario().size() == 2,
+                "A jornada deveria coletar os itens dos dois locais visitados.");
+        verificar(jornada.getInventario().contains(erva)
+                        && jornada.getInventario().contains(pedra),
+                "O inventário deveria conter os itens encontrados na rota.");
+        verificar(grafo.getVertice("CID").getItensDisponiveis().isEmpty()
+                        && grafo.getVertice("GIN").getItensDisponiveis().isEmpty(),
+                "Os itens coletados não deveriam permanecer no mapa.");
+        verificar(quantidadesColetadas.size() == 2
+                        && quantidadesColetadas.get(0) == 1
+                        && quantidadesColetadas.get(1) == 1,
+                "O observador deveria informar os itens coletados em cada chegada.");
+    }
+
+    private static void testarRevisitaNaoDuplicaItens() {
+        Grafo grafo = criarGrafoBase();
+        grafo.getVertice("CID").adicionarItem(new Item("Pokébola"));
+        JornadaPokemon jornada = criarJornada(grafo, 100L);
+
+        jornada.viajarPara(grafo.getVertice("GIN"));
+        jornada.viajarPara(grafo.getVertice("LAB"));
+
+        verificar(jornada.getInventario().size() == 1,
+                "Revisitar um local não deveria duplicar itens já coletados.");
+    }
+
+    private static void testarInventarioNaoPermiteAlteracaoExterna() {
+        Grafo grafo = criarGrafoBase();
+        JornadaPokemon jornada = criarJornada(grafo, 100L);
+        boolean alteracaoRejeitada = false;
+
+        try {
+            jornada.getInventario().add(new Item("Item externo"));
+        } catch (UnsupportedOperationException e) {
+            alteracaoRejeitada = true;
+        }
+
+        verificar(alteracaoRejeitada,
+                "O inventário retornado não deveria permitir alterações externas.");
     }
 
     private static JornadaPokemon criarJornada(Grafo grafo, long prazo) {

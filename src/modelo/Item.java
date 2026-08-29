@@ -1,13 +1,27 @@
 package modelo;
 
-/**
- * representa os itens que podem ser coletados no mapa (poções, pedras de evolução)
- * classe stub para integração inicial, a ser detalhada pelo Integrante 2
- */
+/** Representa um item coletável do mapa. */
 public class Item {
-    private String nome;
+    private final String nome;
 
+    /** Mantido para compatibilidade com o stub inicial e leitores futuros. */
     public Item() {
-        // construtor padrão vazio para permitir compilação imediata
+        this("Item");
+    }
+
+    public Item(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("O nome do item é obrigatório.");
+        }
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    @Override
+    public String toString() {
+        return nome;
     }
 }
