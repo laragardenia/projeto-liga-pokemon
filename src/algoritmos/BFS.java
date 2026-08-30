@@ -4,9 +4,12 @@ import grafo.Aresta;
 import grafo.Grafo;
 import grafo.Vertice;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Random;
 
 public class BFS {
 
@@ -16,6 +19,8 @@ public class BFS {
      * o local aleatório e distante de "respawn" da Equipe Rocket após serem derrotados.
      */
     public Map<Vertice, Integer> calcularDistancias(Grafo grafo, Vertice origemRespawn) {
+        validarEntrada(grafo, origemRespawn);
+
         Map<Vertice, Integer> distancias = new HashMap<>();
         Queue<Vertice> fila = new LinkedList<>();
 
@@ -37,5 +42,48 @@ public class BFS {
             }
         }
         return distancias;
+    }
+
+    /**
+     * Escolhe aleatoriamente um dos vértices da maior camada alcançável pela
+     * BFS. A busca e a seleção custam O(n+m).
+     */
+    public Vertice escolherRespawnDistante(Grafo grafo, Vertice origemRespawn) {
+        return escolherRespawnDistante(grafo, origemRespawn, new Random());
+    }
+
+    /** Sobrecarga que permite controlar a aleatoriedade durante os testes. */
+    public Vertice escolherRespawnDistante(
+            Grafo grafo,
+            Vertice origemRespawn,
+            Random random) {
+        if (random == null) {
+            throw new IllegalArgumentException("A fonte de aleatoriedade é obrigatória.");
+        }
+
+        Map<Vertice, Integer> distancias = calcularDistancias(grafo, origemRespawn);
+        int maiorDistancia = 0;
+
+        for (int distancia : distancias.values()) {
+            maiorDistancia = Math.max(maiorDistancia, distancia);
+        }
+
+        List<Vertice> candidatos = new ArrayList<>();
+        for (Map.Entry<Vertice, Integer> entrada : distancias.entrySet()) {
+            if (entrada.getValue() == maiorDistancia) {
+                candidatos.add(entrada.getKey());
+            }
+        }
+
+        return candidatos.get(random.nextInt(candidatos.size()));
+    }
+
+    private void validarEntrada(Grafo grafo, Vertice origem) {
+        if (grafo == null || origem == null) {
+            throw new IllegalArgumentException("Grafo e origem são obrigatórios.");
+        }
+        if (grafo.getVertice(origem.getId()) == null) {
+            throw new IllegalArgumentException("A origem deve pertencer ao grafo.");
+        }
     }
 }

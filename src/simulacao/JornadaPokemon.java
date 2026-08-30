@@ -7,6 +7,7 @@ import grafo.Grafo;
 import grafo.TipoVertice;
 import grafo.Vertice;
 import modelo.Item;
+import modelo.Treinador;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +22,8 @@ import java.util.Set;
  * de uso dos itens, batalhas e Pokémon permanecem fora desta classe.
  */
 public class JornadaPokemon {
+    public static final int INSIGNIAS_NECESSARIAS_PARA_LIGA = 8;
+
     private final Grafo grafo;
     private final Dijkstra dijkstra;
     private final long prazoLiga;
@@ -200,6 +203,11 @@ public class JornadaPokemon {
                 && estaDentroDoPrazo();
     }
 
+    /** Aplica diretamente a exigência oficial de oito insígnias distintas. */
+    public boolean podeSeInscreverNaLiga() {
+        return podeSeInscreverNaLiga(INSIGNIAS_NECESSARIAS_PARA_LIGA);
+    }
+
     public void adicionarObservador(ObservadorJornada observador) {
         if (observador == null) {
             throw new IllegalArgumentException("O observador da jornada não pode ser nulo.");
@@ -209,6 +217,26 @@ public class JornadaPokemon {
 
     public boolean removerObservador(ObservadorJornada observador) {
         return observadores.remove(observador);
+    }
+
+    /** Registra a unidade de tempo consumida por uma batalha. */
+    public void registrarTempoBatalha() {
+        tempoDecorrido++;
+    }
+
+    /**
+     * Usa um item coletado. A erva é removida do inventário depois de
+     * recuperar os Pokémon conscientes do treinador.
+     */
+    public boolean usarItem(Item item, Treinador treinador) {
+        if (item == null || !inventario.contains(item)) {
+            return false;
+        }
+        if (!item.aplicarEm(treinador)) {
+            return false;
+        }
+        inventario.remove(item);
+        return true;
     }
 
     public long getTempoRestante() {

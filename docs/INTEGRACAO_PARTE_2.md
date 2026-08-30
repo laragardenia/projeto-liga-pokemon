@@ -17,8 +17,9 @@ JornadaPokemon jornada = new JornadaPokemon(grafo, posicaoInicial, prazoLiga);
 ## Eventos e batalhas
 
 `ObservadorJornada` é chamado após cada chegada. Ele recebe o trecho, o tempo
-decorrido e os itens coletados. O módulo de batalha pode usar esse ponto para
-detectar encontros, mas as regras de combate não pertencem à jornada.
+decorrido e os itens coletados. `ControladorJogo` implementa esse contrato para
+detectar os treinadores e a Equipe Rocket presentes, mantendo as regras de
+combate fora da jornada.
 
 Depois de uma vitória em ginásio, o módulo responsável informa a conquista:
 
@@ -29,11 +30,12 @@ jornada.registrarInsignia("CODIGO_DA_INSIGNIA");
 ## Equipe Rocket e BFS
 
 `EquipeRocket` movimenta-se por um único vértice adjacente com `moverPara`.
-Depois de uma derrota, outro módulo calcula o respawn e entrega o resultado:
+Depois de uma derrota, a BFS calcula as camadas do grafo. O controlador sorteia
+um vértice dentre os que estão na maior camada e entrega o resultado:
 
 ```java
 rocket.derrotar();
-Vertice respawn = calcularRespawnComBfs(grafo, origem);
+Vertice respawn = bfs.escolherRespawnDistante(grafo, origem);
 rocket.reativarEm(respawn);
 ```
 
@@ -41,10 +43,10 @@ rocket.reativarEm(respawn);
 
 ## Inscrição na Liga
 
-O programa principal informa a quantidade de insígnias exigida:
+O programa principal usa a exigência oficial de oito insígnias distintas:
 
 ```java
-boolean permitido = jornada.podeSeInscreverNaLiga(quantidadeNecessaria);
+boolean permitido = jornada.podeSeInscreverNaLiga();
 ```
 
 A jornada verifica posição no Estádio, quantidade de insígnias e prazo.

@@ -10,6 +10,12 @@ public class Pokemon {
 
     // Construtor Padrão (Professor Carvalho / Selvagens)
     public Pokemon(String nome, TipoPokemon tipo, int ap, int dp) {
+        if (nome == null || nome.trim().isEmpty() || tipo == null) {
+            throw new IllegalArgumentException("Nome e tipo do Pokémon são obrigatórios.");
+        }
+        if (ap < 0 || dp < 0) {
+            throw new IllegalArgumentException("AP e DP não podem ser negativos.");
+        }
         this.nome = nome;
         this.tipo = tipo;
         this.hp = 100; // HP vai de 1 a 100
@@ -34,6 +40,9 @@ public class Pokemon {
     }
 
     public void receberDano(int dano) {
+        if (dano < 0) {
+            throw new IllegalArgumentException("O dano não pode ser negativo.");
+        }
         this.hp -= dano;
         if (this.hp < 0) this.hp = 0;
     }
@@ -47,11 +56,36 @@ public class Pokemon {
     }
 
     // Getters e Setters básicos
-    public int getAp() { return ap; }
-    public int getDp() { return dp; }
+    public String getNome() { return nome; }
+    public TipoPokemon getTipo() { return tipo; }
+    public int getAp() { return ap + xp / 10; }
+    public int getDp() { return dp + xp / 10; }
     public int getXp() { return xp; }
     public int getHp() { return hp; }
-    public void adicionarXp(int ganho) { this.xp += ganho; }
+    public void adicionarXp(int ganho) {
+        if (ganho < 0) {
+            throw new IllegalArgumentException("O ganho de XP não pode ser negativo.");
+        }
+        this.xp += ganho;
+    }
     public void adicionarAtributos(int ganho) { this.ap += ganho; this.dp += ganho; }
     public void recuperarHp() { if(this.hp < 100) this.hp++; } // Recuperação passiva
+
+    /** Ervas só podem ser usadas por Pokémon que ainda estejam conscientes. */
+    public void recuperarHp(int pontos) {
+        if (pontos < 0) {
+            throw new IllegalArgumentException("A recuperação não pode ser negativa.");
+        }
+        if (isConsciente()) {
+            hp = Math.min(100, hp + pontos);
+        }
+    }
+
+    public boolean isMuitoMachucado() {
+        return hp < 5;
+    }
+
+    public void recuperarNoCentroMedico() {
+        hp = 100;
+    }
 }

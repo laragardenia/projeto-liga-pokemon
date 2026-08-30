@@ -6,6 +6,7 @@ import grafo.Vertice;
 import modelo.Item;
 import modelo.Pokemon;
 import modelo.TipoPokemon;
+import modelo.TipoItem;
 import modelo.Treinador;
 
 import java.io.BufferedReader;
@@ -129,6 +130,7 @@ public class LeitorArquivo {
 
         //distribui os pokémons, treinadores e itens aleatoriamente pelas cidades
         espalharEntidades(grafo, qtdPokemons, qtdTreinadores, qtdItens);
+        adicionarLideresDosGinasios(grafo);
 
         //calcula o tempo global limite (15 vezes a soma dos pesos das arestas)
         int somaPesos = grafo.getSomaTotalPesos();
@@ -152,22 +154,55 @@ public class LeitorArquivo {
             //sorteia um vértice qualquer da lista em tempo O(1)
             Vertice local = todosVertices.get(random.nextInt(todosVertices.size()));            
             //instancia o objeto e o coloca na lista interna do local
-            Pokemon novoPokemon = new Pokemon("Temp", TipoPokemon.NORMAL, 10, 10);
+            Pokemon novoPokemon = criarPokemonAleatorio("Selvagem-" + (i + 1));
             local.adicionarPokemon(novoPokemon);
         }
 
         //distribui os treinadores adversários
         for (int i = 0; i < qtdTreinadores; i++) {
             Vertice local = todosVertices.get(random.nextInt(todosVertices.size()));            
-            Treinador novoTreinador = new Treinador("Temp");
+            Treinador novoTreinador = new Treinador("Treinador-" + (i + 1));
+            preencherEquipe(novoTreinador, "Adversário-" + (i + 1));
+            novoTreinador.adicionarXp(random.nextInt(101));
             local.adicionarTreinador(novoTreinador);
         }
 
         //distribui os itens de viagem
         for (int i = 0; i < qtdItens; i++) {
             Vertice local = todosVertices.get(random.nextInt(todosVertices.size()));            
-            Item novoItem = new Item();
+            TipoItem tipo = random.nextBoolean() ? TipoItem.ERVA : TipoItem.OVO;
+            Item novoItem = new Item(tipo);
             local.adicionarItem(novoItem);
         }
+    }
+
+    /** Cada ginásio recebe um líder oficial e uma insígnia própria. */
+    private static void adicionarLideresDosGinasios(Grafo grafo) {
+        for (Vertice vertice : grafo.getTodosVertices()) {
+            if (vertice.getTipo() == TipoVertice.GINASIO) {
+                Treinador lider = new Treinador(
+                        "Líder de " + vertice.getNome(),
+                        "INSIGNIA-" + vertice.getId());
+                preencherEquipe(lider, "Pokémon do líder " + vertice.getId());
+                lider.adicionarXp(50 + random.nextInt(151));
+                vertice.adicionarTreinador(lider);
+            }
+        }
+    }
+
+    private static void preencherEquipe(Treinador treinador, String prefixo) {
+        for (int i = 1; i <= 3; i++) {
+            treinador.adicionarPokemon(criarPokemonAleatorio(prefixo + "-" + i));
+        }
+    }
+
+    private static Pokemon criarPokemonAleatorio(String nome) {
+        TipoPokemon[] tipos = TipoPokemon.values();
+        TipoPokemon tipo = tipos[random.nextInt(tipos.length)];
+        int ap = 15 + random.nextInt(21);
+        int dp = 5 + random.nextInt(16);
+        Pokemon pokemon = new Pokemon(nome, tipo, ap, dp);
+        pokemon.adicionarXp(random.nextInt(101));
+        return pokemon;
     }
 }
