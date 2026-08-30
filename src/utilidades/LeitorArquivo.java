@@ -5,6 +5,7 @@ import grafo.TipoVertice;
 import grafo.Vertice;
 import modelo.Item;
 import modelo.Pokemon;
+import modelo.TipoPokemon;
 import modelo.Treinador;
 
 import java.io.BufferedReader;
@@ -151,14 +152,18 @@ public class LeitorArquivo {
             //sorteia um vértice qualquer da lista em tempo O(1)
             Vertice local = todosVertices.get(random.nextInt(todosVertices.size()));            
             //instancia o objeto e o coloca na lista interna do local
-            Pokemon novoPokemon = new Pokemon();
+            String nomePop = "Selvagem_" + i;
+            int hpAleatorio = random.nextInt(50) + 50; // HP entre 50 e 100
+            int apAleatorio = random.nextInt(20) + 10; // AP entre 10 e 30
+            
+            Pokemon novoPokemon = new Pokemon(nomePop, TipoPokemon.NORMAL, hpAleatorio, apAleatorio);
             local.adicionarPokemon(novoPokemon);
         }
 
         //distribui os treinadores adversários
         for (int i = 0; i < qtdTreinadores; i++) {
             Vertice local = todosVertices.get(random.nextInt(todosVertices.size()));            
-            Treinador novoTreinador = new Treinador();
+            Treinador novoTreinador = new Treinador("Rival_" + i);
             local.adicionarTreinador(novoTreinador);
         }
 
