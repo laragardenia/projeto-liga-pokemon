@@ -12,7 +12,8 @@ viagem.
 ## Executar no VS Code
 
 1. Abra a pasta do repositório;
-2. Clique em **Run** acima do método `main`.
+2. Abra src/Main.java;
+3. Clique em **Run** acima do método `main`.
 
 O programa usa `mapa_regiao.txt` por padrão. Para carregar outro mapa ou
 viajar diretamente para um vértice, informe os argumentos pela configuração de
@@ -24,7 +25,7 @@ No Windows:
 
 ```cmd
 mkdir out
-javac -encoding UTF-8 -d out src\Main.java src\algoritmos\*.java src\grafo\*.java src\jogo\*.java src\modelo\*.java src\simulacao\*.java src\teste\*.java src\utilidades\*.java
+javac -encoding UTF-8 -d out src\Main.java src\algoritmos\*.java src\grafo\*.java src\jogo\*.java src\modelo\*.java src\simulacao\*.java src\utilidades\*.java
 java -cp out Main mapa_regiao.txt V2
 ```
 
