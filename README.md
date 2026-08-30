@@ -50,7 +50,12 @@ java -cp out teste.TesteJornadaPokemon
 java -cp out teste.TesteEquipeRocket
 java -cp out teste.TesteIntegracaoParte2
 java -cp out teste.TesteIntegracaoFinal
+java -cp out teste.TesteOvosIncubadora
 ```
 
 O teste final valida conjuntamente jornada, uso de erva, batalha contra líder,
 insígnia, batalha contra a Equipe Rocket e respawn pela BFS.
+
+O teste de ovos valida a decisão de aceitar ou recusar, o uso exclusivo da
+incubadora, o nascimento após 100 unidades e os limites de seis Pokémon ativos
+e sete no total contando ovos.

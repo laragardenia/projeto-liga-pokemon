@@ -8,6 +8,7 @@ import grafo.TipoVertice;
 import grafo.Vertice;
 import modelo.Item;
 import modelo.Treinador;
+import modelo.TipoItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -237,6 +238,23 @@ public class JornadaPokemon {
         }
         inventario.remove(item);
         return true;
+    }
+
+    public boolean possuiItem(TipoItem tipo) {
+        if (tipo == null) {
+            return false;
+        }
+        for (Item item : inventario) {
+            if (item.getTipo() == tipo) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Remove um item aceito, recusado ou descartado do inventário. */
+    public boolean descartarItem(Item item) {
+        return inventario.remove(item);
     }
 
     public long getTempoRestante() {

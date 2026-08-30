@@ -5,6 +5,10 @@ import grafo.Grafo;
 import grafo.TipoVertice;
 import grafo.Vertice;
 import modelo.Item;
+import modelo.OvoPokemon;
+import modelo.Pokemon;
+import modelo.TipoItem;
+import modelo.TipoPokemon;
 import modelo.Treinador;
 import simulacao.EquipeRocket;
 import simulacao.JornadaPokemon;
@@ -27,6 +31,7 @@ public class ControladorJogo implements ObservadorJornada {
     private final Random random;
 
     private List<Treinador> treinadoresDisponiveis;
+    private final List<Item> ovosAguardandoDecisao;
     private boolean encontroComRocket;
 
     public ControladorJogo(
@@ -70,6 +75,8 @@ public class ControladorJogo implements ObservadorJornada {
         this.bfs = bfs;
         this.random = random;
         this.treinadoresDisponiveis = new ArrayList<>();
+        this.ovosAguardandoDecisao = new ArrayList<>();
+        registrarOvosEncontrados(jornada.getInventario());
         atualizarEncontros(jornada.getPosicaoAtual());
     }
 
@@ -81,6 +88,8 @@ public class ControladorJogo implements ObservadorJornada {
             int tempoTrecho,
             long tempoDecorrido,
             List<Item> itensColetados) {
+        jogador.avancarIncubacao(tempoTrecho);
+        registrarOvosEncontrados(itensColetados);
         atualizarEncontros(destino);
     }
 
@@ -98,6 +107,7 @@ public class ControladorJogo implements ObservadorJornada {
 
         ResultadoBatalha resultado = sistemaBatalha.batalhar(jogador, adversario);
         jornada.registrarTempoBatalha();
+        jogador.avancarIncubacao(1);
 
         if (resultado == ResultadoBatalha.VITORIA_DESAFIANTE
                 && adversario.isLiderGinasio()) {
@@ -121,6 +131,7 @@ public class ControladorJogo implements ObservadorJornada {
         Vertice pontoAtaque = jornada.getPosicaoAtual();
         ResultadoBatalha resultado = sistemaBatalha.batalhar(jogador, treinadorRocket);
         jornada.registrarTempoBatalha();
+        jogador.avancarIncubacao(1);
 
         if (resultado == ResultadoBatalha.VITORIA_DESAFIANTE) {
             equipeRocket.derrotar();
@@ -134,6 +145,57 @@ public class ControladorJogo implements ObservadorJornada {
 
     public boolean usarItem(Item item) {
         return jornada.usarItem(item, jogador);
+    }
+
+    /** Aceita um ovo encontrado sem revelar sua espécie antes de chocar. */
+    public OvoPokemon aceitarOvo(Item itemOvo) {
+        if (!ovosAguardandoDecisao.contains(itemOvo)) {
+            return null;
+        }
+
+        OvoPokemon ovo = new OvoPokemon(criarEspecieInicialAleatoria());
+        if (!jogador.aceitarOvo(ovo)) {
+            return null;
+        }
+
+        ovosAguardandoDecisao.remove(itemOvo);
+        jornada.descartarItem(itemOvo);
+        return ovo;
+    }
+
+    /** Recusa o ovo e o remove dos itens pendentes da jornada. */
+    public boolean recusarOvo(Item itemOvo) {
+        if (!ovosAguardandoDecisao.remove(itemOvo)) {
+            return false;
+        }
+        jornada.descartarItem(itemOvo);
+        return true;
+    }
+
+    /** Inicia a incubação se o treinador possuir a incubadora inicial. */
+    public boolean iniciarIncubacao(OvoPokemon ovo) {
+        return jornada.possuiItem(TipoItem.INCUBADORA)
+                && jogador.iniciarIncubacao(ovo);
+    }
+
+    public List<Item> getOvosAguardandoDecisao() {
+        return Collections.unmodifiableList(new ArrayList<>(ovosAguardandoDecisao));
+    }
+
+    public List<OvoPokemon> getOvosAceitos() {
+        return jogador.getOvos();
+    }
+
+    public Pokemon getRecemNascidoAguardandoEscolha() {
+        return jogador.getPokemonAguardandoEscolha();
+    }
+
+    public boolean manterRecemNascidoNoLugarDe(Pokemon pokemonEnviadoAoProfessor) {
+        return jogador.manterRecemNascidoNoLugarDe(pokemonEnviadoAoProfessor);
+    }
+
+    public boolean enviarRecemNascidoAoProfessor() {
+        return jogador.enviarRecemNascidoAoProfessor();
     }
 
     public List<Treinador> getTreinadoresDisponiveis() {
@@ -154,6 +216,48 @@ public class ControladorJogo implements ObservadorJornada {
         treinadoresDisponiveis = new ArrayList<>(local.getTreinadoresPresentes());
         encontroComRocket = equipeRocket.isAtiva()
                 && equipeRocket.getPosicaoAtual().equals(local);
+    }
+
+    private void registrarOvosEncontrados(List<Item> itens) {
+        for (Item item : itens) {
+            if (item.getTipo() == TipoItem.OVO
+                    && !ovosAguardandoDecisao.contains(item)) {
+                ovosAguardandoDecisao.add(item);
+            }
+        }
+    }
+
+    private Pokemon criarEspecieInicialAleatoria() {
+        TipoPokemon[] tipos = TipoPokemon.values();
+        TipoPokemon tipo = tipos[random.nextInt(tipos.length)];
+        String nome;
+
+        switch (tipo) {
+            case FOGO:
+                nome = "Charmander";
+                break;
+            case AGUA:
+                nome = "Squirtle";
+                break;
+            case PLANTA:
+                nome = "Bulbasaur";
+                break;
+            case ELETRICO:
+                nome = "Pikachu";
+                break;
+            case VENENOSO:
+                nome = "Ekans";
+                break;
+            case FANTASMA:
+                nome = "Gastly";
+                break;
+            default:
+                nome = "Eevee";
+        }
+
+        int apInicial = 15 + random.nextInt(21);
+        int dpInicial = 5 + random.nextInt(16);
+        return new Pokemon(nome, tipo, apInicial, dpInicial);
     }
 
     private boolean batalhasProibidasNaPosicao() {

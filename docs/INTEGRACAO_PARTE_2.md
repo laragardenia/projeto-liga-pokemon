@@ -50,3 +50,18 @@ boolean permitido = jornada.podeSeInscreverNaLiga();
 ```
 
 A jornada verifica posição no Estádio, quantidade de insígnias e prazo.
+
+## Ovos e incubadora
+
+Os itens do tipo `OVO` encontrados ficam aguardando a decisão do jogador no
+`ControladorJogo`. Ao aceitar, o item é convertido em `OvoPokemon`; ao recusar,
+é removido do inventário.
+
+O treinador pode manter vários ovos, desde que a soma de Pokémon ativos, ovos
+e recém-nascidos aguardando escolha não ultrapasse sete. Apenas um ovo utiliza
+a incubadora por vez. O `ObservadorJornada` repassa o tempo de cada trecho e,
+ao acumular 100 unidades, o ovo choca com zero XP.
+
+Com menos de seis Pokémon ativos, o recém-nascido entra diretamente na equipe.
+Com seis, ele aguarda a escolha entre substituir um Pokémon atual ou ser enviado
+ao Professor Carvalho.
