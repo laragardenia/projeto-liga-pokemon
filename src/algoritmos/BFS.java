@@ -1,30 +1,38 @@
 package algoritmos;
-import java.util.*;
+
+import grafo.Aresta;
+import grafo.Grafo;
+import grafo.Vertice;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 
 public class BFS {
 
     /**
      * Executa a Busca em Largura (BFS) em tempo O(n+m).
-     * Utilizada para calcular a distância topológica (camadas) e definir
-     * o local distante de respawn da Equipe Rocket após serem derrotados.
+     * Utilizada para calcular a distância topológica (camadas) ao definir
+     * o local aleatório e distante de "respawn" da Equipe Rocket após serem derrotados.
      */
-    public Map<Integer, Integer> calcularDistancias(Map<Integer, List<Integer>> grafoListaAdjacencia, int origemRespawn) {
-        Map<Integer, Integer> distancias = new HashMap<>();
-        Queue<Integer> fila = new LinkedList<>();
+    public Map<Vertice, Integer> calcularDistancias(Grafo grafo, Vertice origemRespawn) {
+        Map<Vertice, Integer> distancias = new HashMap<>();
+        Queue<Vertice> fila = new LinkedList<>();
 
         fila.add(origemRespawn);
         distancias.put(origemRespawn, 0);
 
         while (!fila.isEmpty()) {
-            int atual = fila.poll();
+            Vertice atual = fila.poll();
             int distAtual = distancias.get(atual);
 
-            if (grafoListaAdjacencia.containsKey(atual)) {
-                for (int vizinho : grafoListaAdjacencia.get(atual)) {
-                    if (!distancias.containsKey(vizinho)) {
-                        distancias.put(vizinho, distAtual + 1);
-                        fila.add(vizinho);
-                    }
+            // Obtém as arestas adjacentes usando o método implementado na classe Grafo
+            for (Aresta aresta : grafo.getAdjacentes(atual)) {
+                Vertice vizinho = aresta.getDestino();
+
+                if (!distancias.containsKey(vizinho)) {
+                    distancias.put(vizinho, distAtual + 1);
+                    fila.add(vizinho);
                 }
             }
         }
