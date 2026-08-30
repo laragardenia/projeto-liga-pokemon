@@ -11,9 +11,8 @@ viagem.
 
 ## Executar no VS Code
 
-1. Abra a pasta do repositório.
-2. Abra `src/Main.java`.
-3. Clique em **Run** acima do método `main`.
+1. Abra a pasta do repositório;
+2. Clique em **Run** acima do método `main`.
 
 O programa usa `mapa_regiao.txt` por padrão. Para carregar outro mapa ou
 viajar diretamente para um vértice, informe os argumentos pela configuração de
@@ -38,24 +37,3 @@ O segundo argumento (`V2`) é opcional e representa o identificador do destino.
 - `simulacao`: jornada e estado da Equipe Rocket;
 - `jogo`: batalhas e controlador de integração;
 - `utilidades`: leitura do mapa em arquivo texto;
-- `teste`: testes executáveis sem dependência de JUnit.
-
-## Testes
-
-Depois da compilação, execute:
-
-```cmd
-java -cp out teste.TesteDijkstra
-java -cp out teste.TesteJornadaPokemon
-java -cp out teste.TesteEquipeRocket
-java -cp out teste.TesteIntegracaoParte2
-java -cp out teste.TesteIntegracaoFinal
-java -cp out teste.TesteOvosIncubadora
-```
-
-O teste final valida conjuntamente jornada, uso de erva, batalha contra líder,
-insígnia, batalha contra a Equipe Rocket e respawn pela BFS.
-
-O teste de ovos valida a decisão de aceitar ou recusar, o uso exclusivo da
-incubadora, o nascimento após 100 unidades e os limites de seis Pokémon ativos
-e sete no total contando ovos.
