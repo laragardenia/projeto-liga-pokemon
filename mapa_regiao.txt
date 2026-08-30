@@ -1,0 +1,36 @@
+#abaixo estão os formatos padrão escolhidos para o arquivo de entrada
+
+# --- 1: TOPOLOGIA DO GRAFO ---
+#formato: [TIPO_ORIGEM] [ID_ORIGEM] [NOME_ORIGEM] [TIPO_DESTINO] [ID_DESTINO] [NOME_DESTINO] [TEMPO_ARESTA]
+MAPA
+CARVALHO V1 Lab_Carvalho GINASIO V2 Ginasio_Pewter 15
+GINASIO V2 Ginasio_Pewter MCP V3 Centro_Pokemon_Pewter 5
+MCP V3 Centro_Pokemon_Pewter GINASIO V4 Ginasio_Cerulean 12
+GINASIO V4 Ginasio_Cerulean GINASIO V5 Ginasio_Vermilion 18
+GINASIO V5 Ginasio_Vermilion GINASIO V6 Ginasio_Celadon 10
+GINASIO V6 Ginasio_Celadon GINASIO V7 Ginasio_Fuchsia 14
+GINASIO V7 Ginasio_Fuchsia GINASIO V8 Ginasio_Saffron 8
+GINASIO V8 Ginasio_Saffron GINASIO V9 Ginasio_Cinnabar 22
+GINASIO V9 Ginasio_Cinnabar GINASIO V10 Ginasio_Viridian 11
+GINASIO V10 Ginasio_Viridian ESTADIO V11 Liga_Pokemon 20
+#retorno que fecha o circuito principal (estádio de volta ao laboratório)
+ESTADIO V11 Liga_Pokemon CARVALHO V1 Lab_Carvalho 25
+#atalho que cruza o mapa (ginásio de saffron direto para o centro pokémon de pewter)
+GINASIO V8 Ginasio_Saffron MCP V3 Centro_Pokemon_Pewter 30
+
+#--- 2: QUANTIDADE DE ENTIDADES ---
+# formato: [TIPO_ENTIDADE] [QUANTIDADE]
+ENTIDADES
+POKEMONS 15
+TREINADORES 6
+ITENS 10
+
+# --- 3: REGRAS DE EVOLUÇÃO ---
+# formato: [ESPECIE_BASE] [ESPECIE_EVOLUIDA] [XP_NECESSARIO]
+EVOLUCOES
+Charmander Charmeleon 1000
+Charmeleon Charizard 1000
+Squirtle Wartortle 1000
+Wartortle Blastoise 1000
+Bulbasaur Ivysaur 1000
+Ivysaur Venusaur 1000
