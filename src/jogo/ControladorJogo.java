@@ -147,6 +147,13 @@ public class ControladorJogo implements ObservadorJornada {
             encontroComRocket = false;
         } else {
             treinadorRocket.recuperarEquipe();
+            
+            //mecânica extra: roubo de insígnia em caso de derrota do jogador [adiconado por Lara]
+            if (!jornada.getInsignias().isEmpty()) {
+                String insigniaRoubada = jornada.getInsignias().iterator().next();
+                jornada.removerInsignia(insigniaRoubada);
+                System.out.println("A Equipe Rocket venceu e roubou sua insígnia: " + insigniaRoubada + "!");
+            }  
         }
         return resultado;
     }

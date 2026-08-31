@@ -182,6 +182,14 @@ public class JornadaPokemon {
         return Collections.unmodifiableSet(new LinkedHashSet<String>(insignias));
     }
 
+    //remove uma insígnia do jogador quando roubada pela equipe rocket [adiconado por Lara]
+    public boolean removerInsignia(String codigoInsignia) {
+        if (codigoInsignia == null) {
+            return false;
+        }
+        return insignias.remove(codigoInsignia.trim());
+    }
+
     public boolean possuiInsignia(String codigoInsignia) {
         if (codigoInsignia == null) {
             return false;

@@ -44,16 +44,28 @@ public class SistemaBatalha {
         }
 
         // Dano base[cite: 4]
-        int dano = Math.max(1, apAtacante - dpDefensor);
+        int danoBase = Math.max(1, apAtacante - dpDefensor);
 
         // Crítico: chance proporcional à diferença de XP
         if (random.nextInt(100) < chanceEspecial) {
             System.out.println("Dano Crítico!");
-            dano *= 2;
+            danoBase *= 2;
         }
 
-        pDefensor.receberDano(dano);
-        System.out.println("Dano causado: " + dano);
+        //aplicação do multiplicador de tipo (Elemento Extra) [adiconado por Lara]
+        double multiplicadorTipo = modelo.TipoPokemon.obterMultiplicadorDano(
+                pAtacante.getTipo(), pDefensor.getTipo());
+        
+        int danoFinal = (int) Math.max(1, Math.round(danoBase * multiplicadorTipo));
+
+        if (multiplicadorTipo > 1.0) {
+            System.out.println("Ataque super efetivo! (x" + multiplicadorTipo + ")");
+        } else if (multiplicadorTipo < 1.0) {
+            System.out.println("Ataque pouco efetivo... (x" + multiplicadorTipo + ")");
+        }
+
+        pDefensor.receberDano(danoFinal);
+        System.out.println("Dano causado: " + danoFinal);
 
         return verificarFimDeCombate(pAtacante, pDefensor);
     }
