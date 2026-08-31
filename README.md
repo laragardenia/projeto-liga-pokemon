@@ -2,7 +2,7 @@
 
 **Projeto Final da Disciplina de Algoritmos em Grafos**  
 **Universidade Federal do Cariri (UFCA) — Semestre 2026.1**  
-**Professor: Carlos Vinícius**
+**Professor: Carlos Vinícius G. C. Lima**
 
 
 ## 📌 Link do Repositório
@@ -100,4 +100,5 @@ java -cp out Main mapa_regiao.txt V2
 
 
 ##
-**Desenvolvido por Lara Gardenia, João Lucas e Jonatas Candido - UFCA 2026.1**
+**Desenvolvido por Lara Gardenia, João Lucas e Jonatas Candido - UFCA 2026.1**  
+_Rumo ao topo da Liga Pokémon! 🏆⚡_
