@@ -48,11 +48,26 @@ public class Pokemon {
     }
 
     public void evoluir() {
-        if (this.xp >= 1000) { // Evolui ao acumular 1000 XP
-            this.ap += (int) (this.ap * 0.3); // Acréscimo de 30% em AP
-            this.dp += (int) (this.dp * 0.3); // Acréscimo de 30% em DP
-            this.xp -= 1000;
+        evoluir(this.nome, 1000);
+    }
+
+    /** Aplica uma regra de evolução carregada do arquivo do mapa. */
+    public boolean evoluir(String novoNome, int xpNecessario) {
+        if (novoNome == null || novoNome.trim().isEmpty()) {
+            throw new IllegalArgumentException("O nome da evolução é obrigatório.");
         }
+        if (xpNecessario <= 0) {
+            throw new IllegalArgumentException("O XP necessário deve ser positivo.");
+        }
+        if (xp < xpNecessario) {
+            return false;
+        }
+
+        this.nome = novoNome.trim();
+        this.ap += (int) (this.ap * 0.3);
+        this.dp += (int) (this.dp * 0.3);
+        this.xp -= xpNecessario;
+        return true;
     }
 
     // Getters e Setters básicos

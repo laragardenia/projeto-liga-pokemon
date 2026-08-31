@@ -5,6 +5,7 @@ import grafo.Grafo;
 import grafo.TipoVertice;
 import grafo.Vertice;
 import jogo.ControladorJogo;
+import jogo.MenuJogo;
 import modelo.Pokemon;
 import modelo.Item;
 import modelo.TipoItem;
@@ -13,6 +14,8 @@ import modelo.Treinador;
 import simulacao.EquipeRocket;
 import simulacao.JornadaPokemon;
 import utilidades.LeitorArquivo;
+
+import java.util.Scanner;
 
 /** Ponto de entrada que conecta o leitor, o grafo e a jornada. */
 public class Main {
@@ -62,6 +65,15 @@ public class Main {
                     System.out.println("Tempo da rota: " + resultado.getTempoTotal());
                     System.out.println("Tempo decorrido: " + jornada.getTempoDecorrido());
                 }
+            } else {
+                MenuJogo menu = new MenuJogo(
+                        grafo,
+                        jornada,
+                        jogador,
+                        controlador,
+                        carregamento.getRegrasEvolucao(),
+                        new Scanner(System.in));
+                menu.executar();
             }
         } catch (Exception erro) {
             System.out.println("Não foi possível iniciar o jogo: " + erro.getMessage());
@@ -79,9 +91,9 @@ public class Main {
 
     private static Treinador criarTreinadorJogador() {
         Treinador jogador = new Treinador("Jogador");
-        jogador.adicionarPokemon(new Pokemon("Charmander", TipoPokemon.FOGO, 35, 20));
-        jogador.adicionarPokemon(new Pokemon("Squirtle", TipoPokemon.AGUA, 33, 22));
-        jogador.adicionarPokemon(new Pokemon("Bulbasaur", TipoPokemon.PLANTA, 34, 21));
+        jogador.adicionarPokemon(new Pokemon("Charmander", TipoPokemon.FOGO, 50, 35));
+        jogador.adicionarPokemon(new Pokemon("Squirtle", TipoPokemon.AGUA, 48, 37));
+        jogador.adicionarPokemon(new Pokemon("Bulbasaur", TipoPokemon.PLANTA, 49, 36));
         return jogador;
     }
 

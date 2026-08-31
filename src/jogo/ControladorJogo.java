@@ -113,6 +113,12 @@ public class ControladorJogo implements ObservadorJornada {
                 && adversario.isLiderGinasio()) {
             jornada.registrarInsignia(adversario.getCodigoInsignia());
         }
+        if (resultado == ResultadoBatalha.VITORIA_DESAFIANTE) {
+            jornada.getPosicaoAtual().removerTreinador(adversario);
+            treinadoresDisponiveis.remove(adversario);
+        } else {
+            adversario.recuperarEquipe();
+        }
         return resultado;
     }
 
@@ -139,12 +145,45 @@ public class ControladorJogo implements ObservadorJornada {
             treinadorRocket.recuperarEquipe();
             equipeRocket.reativarEm(respawn);
             encontroComRocket = false;
+        } else {
+            treinadorRocket.recuperarEquipe();
         }
         return resultado;
     }
 
     public boolean usarItem(Item item) {
         return jornada.usarItem(item, jogador);
+    }
+
+    /**
+     * Captura um Pokémon selvagem presente na posição atual. Uma Pokébola é
+     * consumida somente quando a captura pode ser concluída e há espaço na
+     * equipe do jogador.
+     */
+    public boolean capturarPokemon(Pokemon pokemon) {
+        Vertice local = jornada.getPosicaoAtual();
+        if (pokemon == null || !local.getPokemonsSelvagens().contains(pokemon)) {
+            return false;
+        }
+
+        Item pokebola = localizarPrimeiroItem(TipoItem.POKEBOLA);
+        if (pokebola == null || !jogador.adicionarPokemon(pokemon)) {
+            return false;
+        }
+
+        jornada.descartarItem(pokebola);
+        local.removerPokemon(pokemon);
+        return true;
+    }
+
+    public int getQuantidadePokebolas() {
+        int quantidade = 0;
+        for (Item item : jornada.getInventario()) {
+            if (item.getTipo() == TipoItem.POKEBOLA) {
+                quantidade++;
+            }
+        }
+        return quantidade;
     }
 
     /** Aceita um ovo encontrado sem revelar sua espécie antes de chocar. */
@@ -258,6 +297,15 @@ public class ControladorJogo implements ObservadorJornada {
         int apInicial = 15 + random.nextInt(21);
         int dpInicial = 5 + random.nextInt(16);
         return new Pokemon(nome, tipo, apInicial, dpInicial);
+    }
+
+    private Item localizarPrimeiroItem(TipoItem tipo) {
+        for (Item item : jornada.getInventario()) {
+            if (item.getTipo() == tipo) {
+                return item;
+            }
+        }
+        return null;
     }
 
     private boolean batalhasProibidasNaPosicao() {

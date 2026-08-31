@@ -29,33 +29,31 @@ public class SistemaBatalha {
             Pokemon pDefensor) {
         validarParticipantes(atacante, defensor, pAtacante, pDefensor);
 
-        // Bônus temporário de AP/DP com base no XP do treinador
-        int apAtacante = pAtacante.getAp() + atacante.getXp();
-        int dpDefensor = pDefensor.getDp() + defensor.getXp();
+        // O bônus do treinador cresce de forma gradual. Somar o XP integral
+        // tornaria líderes experientes invulneráveis para a equipe inicial.
+        int apAtacante = pAtacante.getAp() + atacante.getXp() / 100;
+        int dpDefensor = pDefensor.getDp() + defensor.getXp() / 100;
 
         int diferencaXp = Math.abs(pAtacante.getXp() - pDefensor.getXp());
+        int chanceEspecial = Math.min(50, diferencaXp);
 
         // Esquiva: chance proporcional à diferença de XP
-        if (random.nextInt(100) < diferencaXp) {
+        if (random.nextInt(100) < chanceEspecial) {
             System.out.println("O Pokémon atacado esquivou!");
             return false;
         }
 
         // Dano base[cite: 4]
-        int dano = apAtacante - dpDefensor;
+        int dano = Math.max(1, apAtacante - dpDefensor);
 
         // Crítico: chance proporcional à diferença de XP
-        if (random.nextInt(100) < diferencaXp) {
+        if (random.nextInt(100) < chanceEspecial) {
             System.out.println("Dano Crítico!");
             dano *= 2;
         }
 
-        if (dano > 0) {
-            pDefensor.receberDano(dano);
-            System.out.println("Dano causado: " + dano);
-        } else {
-            System.out.println("O ataque não surtiu efeito.");
-        }
+        pDefensor.receberDano(dano);
+        System.out.println("Dano causado: " + dano);
 
         return verificarFimDeCombate(pAtacante, pDefensor);
     }

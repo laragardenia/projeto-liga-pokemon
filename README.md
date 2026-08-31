@@ -15,9 +15,9 @@ viagem.
 2. Abra src/Main.java;
 3. Clique em **Run** acima do método `main`.
 
-O programa usa `mapa_regiao.txt` por padrão. Para carregar outro mapa ou
-viajar diretamente para um vértice, informe os argumentos pela configuração de
-execução ou pelo terminal.
+O programa usa `mapa_regiao.txt` por padrão e abre um menu interativo completo.
+Por ele é possível viajar, planejar rotas, capturar Pokémon, batalhar, coletar
+insígnias, usar itens, incubar ovos, evoluir a equipe e se inscrever na Liga.
 
 ## Compilar e executar pelo terminal
 
@@ -26,10 +26,17 @@ No Windows:
 ```cmd
 mkdir out
 javac -encoding UTF-8 -d out src\Main.java src\algoritmos\*.java src\grafo\*.java src\jogo\*.java src\modelo\*.java src\simulacao\*.java src\utilidades\*.java
-java -cp out Main mapa_regiao.txt V2
+java -cp out Main mapa_regiao.txt
 ```
 
-O segundo argumento (`V2`) é opcional e representa o identificador do destino.
+Digite o número de uma opção e pressione Enter. Para encerrar, escolha `0`.
+
+Também é possível executar uma viagem direta, sem abrir o menu, informando o
+ID de um destino como segundo argumento:
+
+```cmd
+java -cp out Main mapa_regiao.txt V2
+```
 
 ## Principais módulos
 
