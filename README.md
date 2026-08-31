@@ -1,20 +1,20 @@
 # Rumo à Liga Pokémon 🎮🏆
 
-Projeto Final da Disciplina de Algoritmos em Grafos
-Universidade Federal do Cariri (UFCA) — Semestre 2026.1
-Professor: Carlos Vinícius G. C. Lima
+**Projeto Final da Disciplina de Algoritmos em Grafos**  
+**Universidade Federal do Cariri (UFCA) — Semestre 2026.1**  
+**Professor: Carlos Vinícius**
 
 
 ## 📌 Link do Repositório
-Repositório Oficial (main): github.com/laragardenia/projeto-liga-pokemon
+[**Repositório Oficial - projeto-liga-pokemon**](https://github.com/laragardenia/projeto-liga-pokemon)
 
 ## 📖 Sobre o Projeto
 O Rumo à Liga Pokémon é um sistema interativo de simulação de RPG em ambiente de grafos, desenvolvido em Java.
 O mapa da região do jogo é carregado a partir do arquivo de entrada padrão mapa_regiao.txt. Este mapa é modelado como um Grafo Não-Direcionado, Ponderado e Conexo, no qual:
 
-Vértices (Nós): Representam os pontos físicos de interesse da região (Laboratório do Professor Carvalho, Cidades/Ginásios, Centro Médico Pokémon - MCP e o Estádio da Liga).
-Arestas (Caminhos): Representam as rotas bidirecionais que conectam esses locais.
-Pesos: Representam o tempo de viagem (em unidades de tempo) necessário para percorrer cada caminho.
+- **Vértices (Nós):** Representam os pontos físicos de interesse da região (Laboratório do Professor Carvalho, Ginásios, Centro Médico Pokémon - MCP e o Estádio da Liga).
+- **Arestas (Caminhos):** Representam as rotas bidirecionais que conectam esses locais.
+- **Pesos:** Representam o tempo de viagem (em unidades de tempo) necessário para percorrer cada caminho.
 
 ## 📁 Estrutura do Projeto (Arquitetura de Pastas)
 A árvore de diretórios do projeto segue a seguinte organização de pacotes e arquivos:
@@ -92,7 +92,12 @@ java -cp out Main mapa_regiao.txt V2
 ```
 
 
-## 📹 Vídeos de Demonstração 
+## 📹 Vídeos de Explicação 
+| Integrante | Vídeo Explicativo |
+| --- | --- |
+| **Lara Gardenia** | Linha 1, Cel 2 |
+| **João Lucas** | [Assista ao Vídeo](https://youtu.be/dATEffkqFAw) |
 
 
-[Assista ao vídeo de apresentação da Parte 2](https://youtu.be/dATEffkqFAw)
+##
+**Desenvolvido por Lara Gardenia, João Lucas e Jonatas Candido - UFCA 2026.1**
