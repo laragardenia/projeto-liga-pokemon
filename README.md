@@ -45,3 +45,7 @@ java -cp out Main mapa_regiao.txt V2
 - `simulacao`: jornada e estado da Equipe Rocket;
 - `jogo`: batalhas e controlador de integração;
 - `utilidades`: leitura do mapa em arquivo texto;
+
+## Vídeo de apresentação — Parte 2
+
+[Assista ao vídeo de apresentação da Parte 2](https://youtu.be/dATEffkqFAw)
