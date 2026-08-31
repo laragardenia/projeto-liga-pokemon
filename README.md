@@ -43,7 +43,7 @@ java -cp out Main mapa_regiao.txt V2
 - `grafo`: representação por listas de adjacências;
 - `algoritmos`: Dijkstra, BFS e DFS;
 - `simulacao`: jornada e estado da Equipe Rocket;
-- `jogo`: batalhas e controlador de integração;
+- `jogo`: menu interativo, batalhas e controlador de integração;
 - `utilidades`: leitura do mapa em arquivo texto;
 
 ## Vídeo de apresentação — Parte 2
