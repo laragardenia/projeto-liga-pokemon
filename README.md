@@ -95,7 +95,7 @@ java -cp out Main mapa_regiao.txt V2
 ## 📹 Vídeos de Explicação 
 | Integrante | Vídeo Explicativo |
 | --- | --- |
-| **Lara Gardenia** | Linha 1, Cel 2 |
+| **Lara Gardenia** | [Assista ao Vídeo](https://www.youtube.com/playlist?list=PLby1r4sddTuc) |
 | **João Lucas** | [Assista ao Vídeo](https://youtu.be/dATEffkqFAw) |
 
 
